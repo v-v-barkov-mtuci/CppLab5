@@ -4,15 +4,9 @@ import <cmath>;
 export namespace Math {
 	class Complex {
 	private:
-		double real;
-		double imag;
 		double mod;
 		double arg;
 
-		Complex(double re, double im, double m, double a);
-
-		void UpdateExp();
-		void UpdateAlg();
 	public:
 		double Re() const;
 		double Im() const;
@@ -21,7 +15,7 @@ export namespace Math {
 
 		Complex();
 		Complex(double i);
-		Complex(double a, double b);
+		Complex(double re, double im);
 
 		static Complex FromAlgebraicForm(double re, double im);
 		static Complex FromExponentialForm(double m, double a);
@@ -59,10 +53,6 @@ export namespace Math {
 
 		int Nominator() const;
 		int Denominator() const;
-
-		static int GCD(int a, int b);
-		static int LCM(int a, int b);
-		static int ABS(int a);
 
 		explicit operator double() const;
 

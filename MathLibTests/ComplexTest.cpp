@@ -235,6 +235,9 @@ namespace Math::Test
 		Complex z1 = Complex::FromExponentialForm(8, M_PI_2);
 		Complex z2 = Complex::FromExponentialForm(2, M_PI_4);
 
+		Complex z1z2 = z1 - z2;
+		Complex z2z1 = z2 - z1;
+
 		ExpectComplexHaveDifferentSign(z1 - z2, z2 - z1);
 		ExpectComplexHaveDifferentSign(z2 - z1, z1 - z2);
 	}

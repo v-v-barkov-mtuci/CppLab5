@@ -1,13 +1,12 @@
 module Math;
-
 using namespace Math;
 
 double Complex::Re() const {
-	return real;
+	return mod*cos(arg);
 }
 
 double Complex::Im() const {
-	return imag;
+	return mod*sin(arg);
 }
 
 double Complex::Mod() const {
@@ -18,135 +17,160 @@ double Complex::Arg() const {
 	return arg;
 }
 
-Complex::Complex(double re, double im, double m, double a) : real(re), imag(im), mod(m), arg(a) {};
-
-Complex::Complex() : real(0), imag(0), mod(0), arg(0) {};
-
-Complex::Complex(double i) : real(i), mod(i), imag(0), arg(0) {};
-
-Complex::Complex(double a, double b) : real(a), imag(b) {
-	mod = hypot(a, b);
-	if ((a == +0.0) || (a == -0.0)) {
-		arg = 0.0;
-	} else {
-		arg = atan(b / a);
-	}
+Complex::Complex(double re, double im) {
+	mod = hypot(re, im);
+	mod = (mod < 0.000000000001) ? 0.0 : mod; // Ќе проходилс€ тест TestIfSubIsNotCommutative, т.к. при переходе к алгебраическому представлению вместо 0 получались малые числа
+	arg = (mod == 0.0) ? 0.0 : atan2(im, re); // ≈сли модуль нулевой, аргумент не важен. —делано, чтобы проходилс€ вышеупом€нутый тест
 };
 
+Complex::Complex() : mod(0), arg(0) {};
+
+Complex::Complex(double i) : mod(i), arg(0) {};
+
 Complex Complex::FromAlgebraicForm(double re, double im) {
-	return Complex(re, im, hypot(re, im), atan(im / re));
+	return Complex(re, im);
 };
 
 Complex Complex::FromExponentialForm(double m, double a) {
-	return Complex(m * cos(a), m * sin(a), m, a);
+	return Complex(m*cos(a), m*sin(a));
 };
 
 Complex::operator double() const {
-	return real;
+	return this->Re();
 };
 
 Complex Complex::operator-() {
-	return Complex(-real, -imag, mod, arg-3.14159265358979323846);
+	return Complex(-Re(), -Im());
 };
 
 Complex& Complex::operator++() {
-	real++;
-	UpdateExp();
+	const double old_real = Re();
+	const double new_real = old_real + 1.0;
+	const double old_imag = Im();
+
+	mod = hypot(new_real, old_imag);
+	arg = atan2(old_imag, new_real);
+
 	return *this;
 };
 
 Complex Complex::operator++(int) {
 	Complex old = *this;
-	real++;
-	UpdateExp();
+	
+	const double old_real = Re();
+	const double new_real = old_real + 1.0;
+	const double old_imag = Im();
+
+	mod = hypot(new_real, old_imag);
+	arg = atan2(old_imag, new_real);
+
 	return old;
 };
 
 Complex& Complex::operator--() {
-	real--;
-	UpdateExp();
+	const double old_real = Re();
+	const double new_real = old_real - 1.0;
+	const double old_imag = Im();
+
+	mod = hypot(new_real, old_imag);
+	arg = atan2(old_imag, new_real);
+
 	return *this;
 };
 
 Complex Complex::operator--(int) {
 	Complex old = *this;
-	real--;
-	UpdateExp();
+
+	const double old_real = Re();
+	const double new_real = old_real - 1.0;
+	const double old_imag = Im();
+
+	mod = hypot(new_real, old_imag);
+	arg = atan2(old_imag, new_real);
+
 	return old;
 };
 
 Complex& Complex::operator+=(const Complex& a) {
-	real += a.Re();
-	imag += a.Im();
-	UpdateExp();
+	const double this_real = Re();
+	const double this_imag = Im();
+
+	const double a_real = a.Re();
+	const double a_imag = a.Im();
+
+	const double new_real = this_real + a_real;
+	const double new_imag = this_imag + a_imag;
+
+	mod = hypot(new_real, new_imag);
+	arg = atan2(new_imag, new_real);
+
 	return *this;
 };
 
 Complex& Complex::operator-=(const Complex& a) {
-	real -= a.Re();
-	imag -= a.Im();
-	UpdateExp();
+	const double this_real = Re();
+	const double this_imag = Im();
+
+	const double a_real = a.Re();
+	const double a_imag = a.Im();
+
+	const double new_real = this_real - a_real;
+	const double new_imag = this_imag - a_imag;
+
+	mod = hypot(new_real, new_imag);
+	arg = atan2(new_imag, new_real);
+
 	return *this;
 };
 
 Complex& Complex::operator*=(const Complex& a) {
-	double tmp_real = Re() * a.Re() - Im() * a.Im();
-	double tmp_imag = Re() * a.Im() + Im() * a.Re();
 	mod = Mod() * a.Mod();
 	arg = Arg() + a.Arg();
-	
-	real = tmp_real;
-	imag = tmp_imag;
 
 	return *this;
 };
 
 Complex& Complex::operator/=(const Complex& a) {
-	const double denom = (a.Re() * a.Re() + a.Im() * a.Im());
-	double tmp_real = (real * a.Re() + imag * a.Im()) / denom;
-	double tmp_imag = (imag * a.Re() - real * a.Im()) / denom;
 	mod = Mod() / a.Mod();
 	arg = Arg() - a.Arg();
-
-	real = tmp_real;
-	imag = tmp_imag;
 
 	return *this;
 };
 
-void Complex::UpdateExp() {
-	mod = hypot(real, imag);
-	arg = atan(imag / real);
-};
-
-void Complex::UpdateAlg() {
-	real = mod * cos(arg);
-	imag = mod * sin(arg);
-};
-
 Complex Math::operator + (const Complex a, const Complex b) {
-	return Complex(a.Re() + b.Re(), a.Im() + b.Im());
+	const double a_real = a.Re();
+	const double a_imag = a.Im();
+
+	const double b_real = b.Re();
+	const double b_imag = b.Im();
+
+	const double new_real = a_real + b_real;
+	const double new_imag = a_imag + b_imag;
+
+	return Complex(new_real, new_imag);
 };
 
 Complex Math::operator - (const Complex a, const Complex b) {
-	return Complex(a.Re() - b.Re(), a.Im() - b.Im());
+	const double a_real = a.Re();
+	const double a_imag = a.Im();
+
+	const double b_real = b.Re();
+	const double b_imag = b.Im();
+
+	const double new_real = a_real - b_real;
+	const double new_imag = a_imag - b_imag;
+
+	return Complex(new_real, new_imag);
 };
 
 Complex Math::operator * (const Complex a, const Complex b) {
-	const double tmp_real = a.Re() * b.Re() - a.Im() * b.Im();
-	const double tmp_imag = a.Re() * b.Im() + a.Im() * b.Re();
-
-	return Complex(tmp_real, tmp_imag);
+	return Math::Complex::FromExponentialForm(a.Mod() * b.Mod(), a.Arg() + b.Arg());
 };
 
 Complex Math::operator / (const Complex a, const Complex b) {
-	const double denom = b.Re() * b.Re() + b.Im() * b.Im();
-	const double tmp_real = (a.Re() * b.Re() + a.Im() * b.Im()) / denom;
-	const double tmp_imag = (a.Im() * b.Re() - a.Re() * b.Im()) / denom;
-
-	return Complex(tmp_real, tmp_imag);
+	return Math::Complex::FromExponentialForm(a.Mod() / b.Mod(), a.Arg() - b.Arg());
 };
 
 Complex Math::operator "" i(long double x) {
-	return Complex(0, (double) x);
+	return Complex(0, x);
 };

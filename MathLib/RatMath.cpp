@@ -2,15 +2,12 @@ module Math;
 using namespace Math;
 Rational::Rational() : nom(0), denom(1) {};
 Rational::Rational(int n, int d) {
-	const int gcd = Rational::GCD(n, d);
+	const int gcd = Math::FindGreatestCommonDivisor(n, d);
 	const int sign = ((n * d) > 0) ? 1 : -1;
-	nom = Rational::ABS(n / gcd) * sign;
-	denom = Rational::ABS(d / gcd);
+	nom = abs(n / gcd) * sign;
+	denom = abs(d / gcd);
 };
 Rational::Rational(int n) : nom(n), denom(1) {};
-int Rational::ABS(int a) {
-	return (a > 0) ? a : -a;
-};
 
 int Rational::Nominator() const {
 	return nom;
@@ -20,24 +17,8 @@ int Rational::Denominator() const {
 }
 
 Rational Math::operator + (const Rational a, const Rational b) {
-	const int denom_lcm = Rational::LCM(a.Denominator(), b.Denominator());
+	const int denom_lcm = Math::FindLeastCommonMultiple(a.Denominator(), b.Denominator());
 	return Rational((a.Nominator() * denom_lcm / a.Denominator()) + (b.Nominator() * denom_lcm / b.Denominator()), denom_lcm);
-};
-
-int Rational::GCD(int a, int b) {
-	a = Rational::ABS(a);
-	b = Rational::ABS(b);
-	int next;
-	do {
-		next = a % b;
-		a = b;
-		b = next;
-	} while (next != 0);
-	return a;
-};
-
-int Rational::LCM(int a, int b) {
-	return ABS(a * b) / GCD(a, b);
 };
 
 Rational Math::operator * (const Rational a, const Rational b) {
@@ -71,7 +52,7 @@ Rational Rational::operator--(int) {
 	return old;
 };
 Rational Math::operator - (const Rational a, const Rational b) {
-	const int denom_lcm = Rational::LCM(a.Denominator(), b.Denominator());
+	const int denom_lcm = Math::FindLeastCommonMultiple(a.Denominator(), b.Denominator());
 	return Rational((a.Nominator() * denom_lcm / a.Denominator()) - (b.Nominator() * denom_lcm / b.Denominator()), denom_lcm);
 };
 Rational Math::operator / (const Rational a, const Rational b) {
@@ -86,14 +67,14 @@ bool Rational::operator !=(Rational x) {
 };
 
 bool Rational::operator >(Rational x) {
-	const int lcm = Rational::LCM(this->Denominator(), x.Denominator());
+	const int lcm = Math::FindLeastCommonMultiple(this->Denominator(), x.Denominator());
 	const int a_nom = this->Nominator() * lcm / this->Denominator();
 	const int b_nom = x.Nominator() * lcm / x.Denominator();
 
 	return a_nom > b_nom;
 };
 bool Rational::operator <(Rational x) {
-	const int lcm = Rational::LCM(this->Denominator(), x.Denominator());
+	const int lcm = Math::FindLeastCommonMultiple(this->Denominator(), x.Denominator());
 	const int a_nom = this->Nominator() * lcm / this->Denominator();
 	const int b_nom = x.Nominator() * lcm / x.Denominator();
 
@@ -108,31 +89,31 @@ bool Rational::operator <=(Rational x) {
 };
 
 Rational& Rational::operator+=(const Rational& a) {
-	const int new_denom = Rational::LCM(this->Denominator(), a.Denominator());
+	const int new_denom = Math::FindLeastCommonMultiple(this->Denominator(), a.Denominator());
 	const int new_nom = (this->Nominator() * new_denom / this->Denominator()) + (a.Nominator() * new_denom / a.Denominator());
 
-	const int gcd = Rational::GCD(new_nom, new_denom);
+	const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
 	const int sign = ((new_nom * new_denom) > 0) ? 1 : -1;
-	nom = Rational::ABS(new_nom / gcd) * sign;
-	denom = Rational::ABS(new_denom / gcd);
+	nom = abs(new_nom / gcd) * sign;
+	denom = abs(new_denom / gcd);
 
 	return *this;
 };
 Rational& Rational::operator-=(const Rational& a) {
-	const int new_denom = Rational::LCM(this->Denominator(), a.Denominator());
+	const int new_denom = Math::FindLeastCommonMultiple(this->Denominator(), a.Denominator());
 	const int new_nom = (this->Nominator() * new_denom / this->Denominator()) - (a.Nominator() * new_denom / a.Denominator());
 
-	const int gcd = Rational::GCD(new_nom, new_denom);
+	const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
 	const int sign = ((new_nom * new_denom) > 0) ? 1 : -1;
-	nom = Rational::ABS(new_nom / gcd) * sign;
-	denom = Rational::ABS(new_denom / gcd);
+	nom = abs(new_nom / gcd) * sign;
+	denom = abs(new_denom / gcd);
 
 	return *this;
 };
 Rational& Rational::operator*=(const Rational& a) {
 	const int new_nom = this->Nominator() * a.Nominator();
 	const int new_denom = this->Denominator() * a.Denominator();
-	const int gcd = Rational::GCD(new_nom, new_denom);
+	const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
 
 	nom = new_nom / gcd;
 	denom = new_denom / gcd;
@@ -142,7 +123,7 @@ Rational& Rational::operator*=(const Rational& a) {
 Rational& Rational::operator/=(const Rational& a) {
 	const int new_nom = this->Nominator() * a.Denominator();
 	const int new_denom = this->Denominator() * a.Nominator();
-	const int gcd = Rational::GCD(new_nom, new_denom);
+	const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
 
 	nom = new_nom / gcd;
 	denom = new_denom / gcd;
@@ -151,9 +132,17 @@ Rational& Rational::operator/=(const Rational& a) {
 };
 
 int Math::FindGreatestCommonDivisor(int a, int b) {
-	return Rational::GCD(a, b);
+	a = abs(a);
+	b = abs(b);
+	int next;
+	do {
+		next = a % b;
+		a = b;
+		b = next;
+	} while (next != 0);
+	return a;
 };
 
 int Math::FindLeastCommonMultiple(int a, int b) {
-	return Rational::LCM(a, b);
+	return abs(a * b) / Math::FindGreatestCommonDivisor(a, b);
 };
