@@ -36,10 +36,10 @@ export namespace Math {
 		Complex& operator/=(const Complex& a);
 	};
 
-	Complex operator + (const Complex a, const Complex b);
-	Complex operator - (const Complex a, const Complex b);
-	Complex operator * (const Complex a, const Complex b);
-	Complex operator / (const Complex a, const Complex b);
+	Complex operator + (const Complex& a, const Complex& b);
+	Complex operator - (const Complex& a, const Complex& b);
+	Complex operator * (const Complex& a, const Complex& b);
+	Complex operator / (const Complex& a, const Complex& b);
 	
 	Complex operator "" i(long double x);
 
@@ -79,10 +79,10 @@ export namespace Math {
 		Rational& operator/=(const Rational& a);
 	};
 
-	Rational operator + (const Rational a, const Rational b);
-	Rational operator * (const Rational a, const Rational b);
-	Rational operator - (const Rational a, const Rational b);
-	Rational operator / (const Rational a, const Rational b);
+	Rational operator + (const Rational& a, const Rational& b);
+	Rational operator * (const Rational& a, const Rational& b);
+	Rational operator - (const Rational& a, const Rational& b);
+	Rational operator / (const Rational& a, const Rational& b);
 
 	export int FindGreatestCommonDivisor(int a, int b);
 	export int FindLeastCommonMultiple(int a, int b);

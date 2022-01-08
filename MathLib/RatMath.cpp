@@ -16,12 +16,12 @@ int Rational::Denominator() const {
 	return denom;
 }
 
-Rational Math::operator + (const Rational a, const Rational b) {
+Rational Math::operator + (const Rational& a, const Rational& b) {
 	const int denom_lcm = Math::FindLeastCommonMultiple(a.Denominator(), b.Denominator());
 	return Rational((a.Nominator() * denom_lcm / a.Denominator()) + (b.Nominator() * denom_lcm / b.Denominator()), denom_lcm);
 };
 
-Rational Math::operator * (const Rational a, const Rational b) {
+Rational Math::operator * (const Rational& a, const Rational& b) {
 	return Rational(a.Nominator() * b.Nominator(), a.Denominator() * b.Denominator());
 }
 
@@ -51,11 +51,11 @@ Rational Rational::operator--(int) {
 	nom -= denom;
 	return old;
 };
-Rational Math::operator - (const Rational a, const Rational b) {
+Rational Math::operator - (const Rational& a, const Rational& b) {
 	const int denom_lcm = Math::FindLeastCommonMultiple(a.Denominator(), b.Denominator());
 	return Rational((a.Nominator() * denom_lcm / a.Denominator()) - (b.Nominator() * denom_lcm / b.Denominator()), denom_lcm);
 };
-Rational Math::operator / (const Rational a, const Rational b) {
+Rational Math::operator / (const Rational& a, const Rational& b) {
 	return Rational(a.Nominator() * b.Denominator(), a.Denominator() * b.Nominator());
 };
 
