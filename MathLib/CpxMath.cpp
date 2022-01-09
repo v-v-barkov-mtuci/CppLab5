@@ -1,4 +1,4 @@
-module Math;
+п»їmodule Math;
 using namespace Math;
 
 double Complex::Re() const {
@@ -17,11 +17,7 @@ double Complex::Arg() const {
 	return arg;
 }
 
-Complex::Complex(double re, double im) {
-	mod = hypot(re, im);
-	mod = (mod < 0.000000000001) ? 0.0 : mod; // Не проходился тест TestIfSubIsNotCommutative, т.к. при переходе к алгебраическому представлению вместо 0 получались малые числа
-	arg = (mod == 0.0) ? 0.0 : atan2(im, re); // Если модуль нулевой, аргумент не важен. Сделано, чтобы проходился вышеупомянутый тест
-};
+Complex::Complex(double re, double im) : mod(hypot(im, re)), arg(atan2(im, re)) {};
 
 Complex::Complex() : mod(0), arg(0) {};
 
@@ -43,13 +39,17 @@ Complex Complex::operator-() {
 	return Complex(-Re(), -Im());
 };
 
-Complex& Complex::operator++() {
+void Complex::DeltaRealPart(const double delta) {
 	const double old_real = Re();
-	const double new_real = old_real + 1.0;
+	const double new_real = old_real + delta;
 	const double old_imag = Im();
 
 	mod = hypot(new_real, old_imag);
 	arg = atan2(old_imag, new_real);
+};
+
+Complex& Complex::operator++() {
+	Complex::DeltaRealPart(1.0);
 
 	return *this;
 };
@@ -57,23 +57,13 @@ Complex& Complex::operator++() {
 Complex Complex::operator++(int) {
 	Complex old = *this;
 	
-	const double old_real = Re();
-	const double new_real = old_real + 1.0;
-	const double old_imag = Im();
-
-	mod = hypot(new_real, old_imag);
-	arg = atan2(old_imag, new_real);
+	++(*this);
 
 	return old;
 };
 
 Complex& Complex::operator--() {
-	const double old_real = Re();
-	const double new_real = old_real - 1.0;
-	const double old_imag = Im();
-
-	mod = hypot(new_real, old_imag);
-	arg = atan2(old_imag, new_real);
+	Complex::DeltaRealPart(-1.0);
 
 	return *this;
 };
@@ -81,44 +71,23 @@ Complex& Complex::operator--() {
 Complex Complex::operator--(int) {
 	Complex old = *this;
 
-	const double old_real = Re();
-	const double new_real = old_real - 1.0;
-	const double old_imag = Im();
-
-	mod = hypot(new_real, old_imag);
-	arg = atan2(old_imag, new_real);
+	--(*this);
 
 	return old;
 };
 
 Complex& Complex::operator+=(const Complex& a) {
-	const double this_real = Re();
-	const double this_imag = Im();
+	Complex sum = (*this) + a;
 
-	const double a_real = a.Re();
-	const double a_imag = a.Im();
-
-	const double new_real = this_real + a_real;
-	const double new_imag = this_imag + a_imag;
-
-	mod = hypot(new_real, new_imag);
-	arg = atan2(new_imag, new_real);
+	std::swap(sum, *this);
 
 	return *this;
 };
 
 Complex& Complex::operator-=(const Complex& a) {
-	const double this_real = Re();
-	const double this_imag = Im();
+	Complex sum = (*this) - a;
 
-	const double a_real = a.Re();
-	const double a_imag = a.Im();
-
-	const double new_real = this_real - a_real;
-	const double new_imag = this_imag - a_imag;
-
-	mod = hypot(new_real, new_imag);
-	arg = atan2(new_imag, new_real);
+	std::swap(sum, *this);
 
 	return *this;
 };
@@ -151,16 +120,9 @@ Complex Math::operator + (const Complex& a, const Complex& b) {
 };
 
 Complex Math::operator - (const Complex& a, const Complex& b) {
-	const double a_real = a.Re();
-	const double a_imag = a.Im();
+	Complex b_copy = b;
 
-	const double b_real = b.Re();
-	const double b_imag = b.Im();
-
-	const double new_real = a_real - b_real;
-	const double new_imag = a_imag - b_imag;
-
-	return Complex(new_real, new_imag);
+	return a + (-b_copy);
 };
 
 Complex Math::operator * (const Complex& a, const Complex& b) {

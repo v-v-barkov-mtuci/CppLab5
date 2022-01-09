@@ -1,11 +1,14 @@
 export module Math;
 import <cmath>;
+import <string_view>;
 
 export namespace Math {
 	class Complex {
 	private:
 		double mod;
 		double arg;
+
+		void DeltaRealPart(const double delta);
 
 	public:
 		double Re() const;
