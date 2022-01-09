@@ -5,10 +5,7 @@ export module Math;
 export namespace Math {
 	class Complex {
 	public:
-		Complex() : Complex(0, 0) {}
-		Complex(double re) :Complex(re, 0) {}
-		Complex(double re, double im) : m_re(re), m_im(im) { }
-		~Complex() { }
+		Complex(double re = 0, double im = 0) : m_re(re), m_im(im) { }
 
 		static Complex FromExponentialForm(double abs, double ph)
 		{
@@ -41,54 +38,59 @@ export namespace Math {
 			return c;
 		}
 
-		friend Complex operator +(const Complex& lhs, const Complex& rhs);
-		friend Complex operator -(const Complex& lhs, const Complex& rhs);
-		friend Complex operator *(const Complex& lhs, const Complex& rhs);
-		friend Complex operator /(const Complex& lhs, const Complex& rhs);
-		friend Complex operator ""i(long double im);
-		friend Complex operator ""i(unsigned long long im);
+
 		friend std::ostream& operator<< (std::ostream& stream, const Complex& instance);
 
 		Complex& operator +=(const Complex& rhs) {
-			Complex c = (*this) + rhs;
-			m_re = c.m_re;
-			m_im = c.m_im;
+			m_re += rhs.m_re;
+			m_im += rhs.m_im;
 			return *this;
 		}
 		Complex& operator -=(const Complex& rhs) {
-			Complex c = (*this) - rhs;
-			m_re = c.m_re;
-			m_im = c.m_im;
+			m_re -= rhs.m_re;
+			m_im -= rhs.m_im;
 			return *this;
 		}
 		Complex& operator *=(const Complex& rhs) {
-			Complex c = (*this) * rhs;
-			m_re = c.m_re;
-			m_im = c.m_im;
+			double t_re, t_im;
+			t_re = m_re * rhs.m_re - m_im * rhs.m_im;
+			t_im = m_re * rhs.m_im + m_im * rhs.m_re;
+			m_re = t_re;
+			m_im = t_im;
 			return *this;
 		}
 		Complex& operator /=(const Complex& rhs) {
-			Complex c = (*this) / rhs;
-			m_re = c.m_re;
-			m_im = c.m_im;
+			double t_re, t_im;
+			t_re = (m_re * rhs.m_re + m_im * rhs.m_im) / (rhs.m_re * rhs.m_re + rhs.m_im * rhs.m_im);
+			t_im = (-m_re * rhs.m_im + m_im * rhs.m_re) / (rhs.m_re * rhs.m_re + rhs.m_im * rhs.m_im);
+			m_re = t_re;
+			m_im = t_im;
 			return *this;
 		}
 
 	private:
 		double m_re, m_im;
 	};
-	Complex operator +(const Complex& lhs, const Complex& rhs) { return Complex(lhs.m_re + rhs.m_re, lhs.m_im + rhs.m_im); }
+	Complex operator +(const Complex& lhs, const Complex& rhs) { 
+		Complex c = lhs;
+		c += rhs;
+		return c; 
+	}
 	Complex operator -(const Complex& lhs, const Complex& rhs)
 	{
-		return Complex(lhs.m_re - rhs.m_re, lhs.m_im - rhs.m_im);
+		Complex c = lhs;
+		c -= rhs;
+		return c;
 	}
 	Complex operator *(const Complex& lhs, const Complex& rhs) {
-		return Complex(lhs.m_re * rhs.m_re - lhs.m_im * rhs.m_im,
-			lhs.m_re * rhs.m_im + lhs.m_im * rhs.m_re);
+		Complex c = lhs;
+		c *= rhs;
+		return c;
 	}
 	Complex operator /(const Complex& lhs, const Complex& rhs) {
-		return Complex((lhs.m_re * rhs.m_re + lhs.m_im * rhs.m_im) / (rhs.m_re * rhs.m_re + rhs.m_im * rhs.m_im),
-			(lhs.m_im * rhs.m_re - lhs.m_re * rhs.m_im) / (rhs.m_re * rhs.m_re + rhs.m_im * rhs.m_im));
+		Complex c = lhs;
+		c /= rhs;
+		return c;
 	}
 
 	Complex operator ""i(long double im) {
@@ -120,20 +122,8 @@ export namespace Math {
 
 	class Rational {
 	public:
-		void Normalize() {
-			int nod = FindGreatestCommonDivisor(m_nominator, m_denominator);
-			m_nominator /= nod;
-			m_denominator /= nod;
-			if (m_denominator < 0) {
-				m_nominator = -m_nominator;
-				m_denominator = -m_denominator;
-			}
-		}
 
-		Rational() : Rational(0, 1) { }
-		Rational(int n) : Rational(n, 1) { }
-		Rational(int n, int d) : m_nominator(n), m_denominator(d) { Normalize(); }
-		~Rational() { }
+		Rational(int n = 0, int d = 1) : m_nominator(n), m_denominator(d) { Normalize(); }
 		int Nominator() const { return m_nominator; }
 		int Denominator() const { return m_denominator; }
 
@@ -148,8 +138,7 @@ export namespace Math {
 		}
 		Rational operator ++(int) {
 			Rational r(m_nominator, m_denominator);
-			m_nominator += m_denominator;
-			Normalize();
+			++(*this);
 			return r;
 		}
 		Rational& operator --() {
@@ -159,8 +148,7 @@ export namespace Math {
 		}
 		Rational operator --(int) {
 			Rational r(m_nominator, m_denominator);
-			m_nominator -= m_denominator;
-			Normalize();
+			--(*this);
 			return r;
 		}
 
@@ -192,11 +180,6 @@ export namespace Math {
 			Normalize();
 			return *this;
 		}
-
-		friend Rational operator +(const Rational& lhs, const Rational& rhs);
-		friend Rational operator -(const Rational& lhs, const Rational& rhs);
-		friend Rational operator *(const Rational& lhs, const Rational& rhs);
-		friend Rational operator /(const Rational& lhs, const Rational& rhs);
 		friend bool operator ==(const Rational& lhs, const Rational& rhs);
 		friend bool operator <(const Rational& lhs, const Rational& rhs);
 		friend bool operator <=(const Rational& lhs, const Rational& rhs);
@@ -207,24 +190,37 @@ export namespace Math {
 
 	private:
 		int m_nominator, m_denominator;
+		void Normalize() {
+			int nod = FindGreatestCommonDivisor(m_nominator, m_denominator);
+			m_nominator /= nod;
+			m_denominator /= nod;
+			if (m_denominator < 0) {
+				m_nominator = -m_nominator;
+				m_denominator = -m_denominator;
+			}
+		}
 	};
 	Rational operator +(const Rational& lhs, const Rational& rhs)
 	{
-		int nok = FindLeastCommonMultiple(lhs.m_denominator, rhs.m_denominator);
-		int multL = nok / lhs.m_denominator, multR = nok / rhs.m_denominator;
-		return Rational(lhs.m_nominator * multL + rhs.m_nominator * multR, nok);
+		Rational r = lhs;
+		r += rhs;
+		return r;
 	}
 	Rational operator -(const Rational& lhs, const Rational& rhs)
 	{
-		int nok = FindLeastCommonMultiple(lhs.m_denominator, rhs.m_denominator);
-		int multL = nok / lhs.m_denominator, multR = nok / rhs.m_denominator;
-		return Rational(lhs.m_nominator * multL - rhs.m_nominator * multR, nok);
+		Rational r = lhs;
+		r -= rhs;
+		return r;
 	}
 	Rational operator *(const Rational& lhs, const Rational& rhs) {
-		return Rational(lhs.m_nominator * rhs.m_nominator, lhs.m_denominator * rhs.m_denominator);
+		Rational r = lhs;
+		r *= rhs;
+		return r;
 	}
 	Rational operator /(const Rational& lhs, const Rational& rhs) {
-		return Rational(lhs.m_nominator * rhs.m_denominator, lhs.m_denominator * rhs.m_nominator);
+		Rational r = lhs;
+		r /= rhs;
+		return r;
 	}
 	bool operator ==(const Rational& lhs, const Rational& rhs) {
 		return lhs.m_nominator == rhs.m_nominator && lhs.m_denominator == rhs.m_denominator;
