@@ -17,7 +17,7 @@ double Complex::Arg() const {
 	return arg;
 }
 
-Complex::Complex(double re, double im) : mod(hypot(im, re)), arg(atan2(im, re)) {};
+Complex::Complex(double re, double im) : mod(sqrt(im * im + re * re)), arg(atan2(im, re)) {};
 
 Complex::Complex() : mod(0), arg(0) {};
 
@@ -40,12 +40,11 @@ Complex Complex::operator-() {
 };
 
 void Complex::DeltaRealPart(const double delta) {
-	const double old_real = Re();
-	const double new_real = old_real + delta;
-	const double old_imag = Im();
+	const double new_real = Re() + delta;
+	const double new_imag = Im();
 
-	mod = hypot(new_real, old_imag);
-	arg = atan2(old_imag, new_real);
+	mod = sqrt(new_real * new_real + new_imag * new_imag);
+	arg = atan2(new_imag, new_real);
 };
 
 Complex& Complex::operator++() {
@@ -136,3 +135,8 @@ Complex Math::operator / (const Complex& a, const Complex& b) {
 Complex Math::operator "" i(long double x) {
 	return Complex(0, x);
 };
+
+std::ostream& Math::operator <<(std::ostream& stream, const Complex& cpx) {
+	stream << "[ " << "Re = " << cpx.Re() << ", Im = " << cpx.Im() << " ]";
+	return stream;
+}

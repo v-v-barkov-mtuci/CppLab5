@@ -1,6 +1,7 @@
 export module Math;
 import <cmath>;
 import <string_view>;
+import <iostream>;
 
 export namespace Math {
 	class Complex {
@@ -46,6 +47,8 @@ export namespace Math {
 	
 	Complex operator "" i(long double x);
 
+	std::ostream& operator<< (std::ostream& stream, const Complex& cpx);
+
 	class Rational {
 	private:
 		int nom, denom;
@@ -86,6 +89,8 @@ export namespace Math {
 	Rational operator * (const Rational& a, const Rational& b);
 	Rational operator - (const Rational& a, const Rational& b);
 	Rational operator / (const Rational& a, const Rational& b);
+
+	std::ostream& operator<< (std::ostream& stream, const Rational& rat);
 
 	export int FindGreatestCommonDivisor(int a, int b);
 	export int FindLeastCommonMultiple(int a, int b);

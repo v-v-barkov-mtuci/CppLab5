@@ -7,26 +7,26 @@ namespace Math::Test
 {
 	void ExpectComplexHasReAndIm(double re, double im, const Complex& z)
 	{
-		EXPECT_DOUBLE_EQ(re, z.Re());
-		EXPECT_DOUBLE_EQ(im, z.Im());
-		EXPECT_DOUBLE_EQ(sqrt(re*re + im*im), z.Mod());
-		EXPECT_DOUBLE_EQ(atan2(im, re), z.Arg());
+		EXPECT_NEAR(re, z.Re(), 0.000000000001);
+		EXPECT_NEAR(im, z.Im(), 0.000000000001);
+		EXPECT_NEAR(sqrt(re*re + im*im), z.Mod(), 0.000000000001);
+		EXPECT_NEAR(atan2(im, re), z.Arg(), 0.000000000001);
 	}
 
 	void ExpectComplexHasModAndArg(double mod, double arg, const Complex& z)
 	{
-		EXPECT_DOUBLE_EQ(mod * cos(arg), z.Re());
-		EXPECT_DOUBLE_EQ(mod * sin(arg), z.Im());
-		EXPECT_DOUBLE_EQ(mod, z.Mod());
-		EXPECT_DOUBLE_EQ(arg, z.Arg());
+		EXPECT_NEAR(mod * cos(arg), z.Re(), 0.000000000001);
+		EXPECT_NEAR(mod * sin(arg), z.Im(), 0.000000000001);
+		EXPECT_NEAR(mod, z.Mod(), 0.000000000001);
+		EXPECT_NEAR(arg, z.Arg(), 0.000000000001);
 	}
 
 	void ExpectComplexAreEqual(const Complex& z1, const Complex& z2)
 	{
-		EXPECT_DOUBLE_EQ(z1.Re(), z2.Re());
-		EXPECT_DOUBLE_EQ(z1.Im(), z2.Im());
-		EXPECT_DOUBLE_EQ(z1.Mod(), z2.Mod());
-		EXPECT_DOUBLE_EQ(z1.Arg(), z1.Arg());
+		EXPECT_NEAR(z1.Re(), z2.Re(), 0.000000000001);
+		EXPECT_NEAR(z1.Im(), z2.Im(), 0.000000000001);
+		EXPECT_NEAR(z1.Mod(), z2.Mod(), 0.000000000001);
+		EXPECT_NEAR(z1.Arg(), z1.Arg(), 0.000000000001);
 	}
 
 	void ExpectComplexHaveDifferentSign(const Complex& z1, const Complex& z2)

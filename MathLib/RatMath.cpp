@@ -131,6 +131,11 @@ Rational& Rational::operator/=(const Rational& a) {
 	return *this;
 };
 
+std::ostream& Math::operator<< (std::ostream& stream, const Rational& rat) {
+	stream << "[ " << rat.Nominator() << " / " << rat.Denominator() << " ]";
+	return stream;
+};
+
 int Math::FindGreatestCommonDivisor(int a, int b) {
 	a = abs(a);
 	b = abs(b);
