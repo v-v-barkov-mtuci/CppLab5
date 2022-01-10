@@ -1,27 +1,15 @@
+module;
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <iostream>
-constexpr auto M_PI = 3.14159265358979323846;
 export module Math;
 export namespace Math {
 	class Complex {
 	public:
-		Complex()
+		Complex(double m_re = 0, double m_im = 0): m_mod(hypot(m_re, m_im)), m_arg(atan2(m_im, m_re)) 
 		{
-			m_mod = 0;
-			m_arg = 0;
-		}
-		Complex(double m_re, double m_im)
-		{
-			m_mod = hypot(m_re, m_im);
-			m_arg = atan2(m_im, m_re);
 			Normalize();
 		}
-		Complex(double i)
-		{
-			m_mod = i;
-			m_arg = 0;
-		}
-
 		void Normalize() {
 			if (abs(m_mod) < 1E-10)
 				m_mod = 0;
@@ -29,13 +17,13 @@ export namespace Math {
 				m_arg = 0;
 		}
 
-		static Complex FromExponentialForm(double m_mod, double m_arg)
+		static Complex FromExponentialForm(double mod, double arg)
 		{
-			return Complex(m_mod * cos(m_arg), m_mod * sin(m_arg));
+			return Complex(mod * cos(arg), mod * sin(arg));
 		}
-		static Complex FromAlgebraicForm(double m_re, double m_im)
+		static Complex FromAlgebraicForm(double re, double im)
 		{
-			return Complex(m_re, m_im);
+			return Complex(re, im);
 		}
 
 
@@ -44,13 +32,15 @@ export namespace Math {
 		double Im() const { return (m_mod * sin(m_arg)); }
 		double Mod() const { return m_mod; }
 		double Arg() const { return m_arg; }
+		double pl() const { return Re() + 1;}
+		double min() const { return Re() - 1;}
 
 		explicit operator double() const { return m_mod * cos(m_arg); }
 		Complex operator -() const { return Complex(-Re(), -Im()); }
 
 		Complex& operator ++() {
-			double t_mod = hypot(Re() + 1, Im());
-			double t_arg = atan2(Im(), Re() + 1);
+			double t_mod = hypot(pl(), Im());
+			double t_arg = atan2(Im(), pl());
 			m_mod = t_mod;
 			m_arg = t_arg;
 			return *this;
@@ -61,8 +51,8 @@ export namespace Math {
 			return c;
 		}
 		Complex& operator --() {
-			double t_mod = hypot(Re() - 1, Im());
-			double t_arg = atan2(Im(), Re() - 1);
+			double t_mod = hypot(min(), Im());
+			double t_arg = atan2(Im(), min());
 			m_mod = t_mod;
 			m_arg = t_arg;
 			return *this;
@@ -82,27 +72,29 @@ export namespace Math {
 		friend std::ostream& operator<< (std::ostream& stream, const Complex& instance);
 
 		Complex& operator +=(const Complex& rhs) {
-			Complex c = (*this) + rhs;
+			Complex c = Complex(Re() + rhs.Re(), Im() + rhs.Im());
 			m_mod = c.m_mod;
 			m_arg = c.m_arg;
+			Normalize();
 			return *this;
 		}
 		Complex& operator -=(const Complex& rhs) {
-			Complex c = (*this) - rhs;
+			Complex c = Complex(Re() - rhs.Re(), Im() - rhs.Im());
 			m_mod = c.m_mod;
 			m_arg = c.m_arg;
+			Normalize();
 			return *this;
 		}
 		Complex& operator *=(const Complex& rhs) {
-			Complex c = (*this) * rhs;
-			m_mod = c.m_mod;
-			m_arg = c.m_arg;
+			m_mod *= rhs.m_mod ;
+			m_arg += rhs.m_arg;
+			Normalize();
 			return *this;
 		}
 		Complex& operator /=(const Complex& rhs) {
-			Complex c = (*this) / rhs;
-			m_mod = c.m_mod;
-			m_arg = c.m_arg;
+			m_mod /= rhs.m_mod;
+			m_arg -= rhs.m_arg;
+			Normalize();
 			return *this;
 		}
 
@@ -112,26 +104,33 @@ export namespace Math {
 	};
 
 	Complex operator +(const Complex& lhs, const Complex& rhs) {
-		Complex z = Complex(lhs.Re() + rhs.Re(), lhs.Im() + rhs.Im());
+		Complex z = lhs;
+		z += rhs;
 		return z;
 	}
 	Complex operator -(const Complex& lhs, const Complex& rhs)
 	{
-		return Complex(lhs.Re() - rhs.Re(), lhs.Im() - rhs.Im());
+		Complex z = lhs;
+		z -= rhs;
+		return z;
 	}
 
 	Complex operator *(const Complex& lhs, const Complex& rhs) {
-		return Complex::FromExponentialForm(lhs.m_mod * rhs.m_mod, lhs.m_arg + rhs.m_arg);
+		Complex z = lhs;
+		z *= rhs;
+		return z;
 	}
 	Complex operator /(const Complex& lhs, const Complex& rhs) {
-		return Complex::FromExponentialForm(lhs.m_mod / rhs.m_mod, lhs.m_arg - rhs.m_arg);
+		Complex z = lhs;
+		z /= rhs;
+		return z;
 	}
 
-	Complex operator ""i(long double m_im) {
-		return Complex::FromAlgebraicForm(0, m_im);
+	Complex operator ""i(long double im) {
+		return Complex::FromAlgebraicForm(0, im);
 	}
-	Complex operator ""i(unsigned long long m_im) {
-		return Complex::FromAlgebraicForm(0, m_im);
+	Complex operator ""i(unsigned long long im) {
+		return Complex::FromAlgebraicForm(0, im);
 	}
 	std::ostream& operator<< (std::ostream& stream, const Complex& complex) {
 		stream << complex.Re() << " + " << complex.Im() << "i";
@@ -184,8 +183,7 @@ export namespace Math {
 		}
 		Rational operator ++(int) {
 			Rational r(m_nominator, m_denominator);
-			m_nominator += m_denominator;
-			Normalize();
+			++(*this);
 			return r;
 		}
 		Rational& operator --() {
@@ -195,8 +193,7 @@ export namespace Math {
 		}
 		Rational operator --(int) {
 			Rational r(m_nominator, m_denominator);
-			m_nominator -= m_denominator;
-			Normalize();
+			--(*this);
 			return r;
 		}
 
@@ -282,5 +279,5 @@ export namespace Math {
 		return stream;
 	}
 }
-// Var 20
+// Var 21
 
