@@ -1,5 +1,6 @@
 import <cmath>;
 #include <iostream>
+#include "fractionizer.h"
 import Math;
 using namespace Math;
 using namespace std;
@@ -12,16 +13,24 @@ Complex ComplexExpIZ(const Complex& z) {
 
 Complex ComplexSin(const Complex& z) {
 	Complex z_copy = z;
-	return (ComplexExpIZ(z_copy) - ComplexExpIZ(-z_copy))/ Complex(0, 2.0);
+	auto delta = ComplexExpIZ(z_copy) - ComplexExpIZ(-z_copy);
+	return delta/ Complex(0, 2.0);
 };
 
 Complex f(const Complex& z) {
 	const Complex a = 0.0 + 1.0i;
-	return a - z * ComplexSin(2.0 * z);
+	return a - z * ComplexSin(Complex(2.0, 0.0) * z);
 };
-double f(const Rational& r) {
-	const Rational a = { 1, 2 };
-	return ((double)a) - ((double)r) * sin(2.0 * ((double)r));
+
+Rational f(const Rational& r) {
+	const Rational a = Rational(1, 2);
+	const double result = (((double)r) * sin(2.0 * ((double)r)));
+	int n, d, sign;
+	sign = (result >= 0) ? 1 : -1;
+	Fractionizer::fractionize(abs(result), n, d);
+	auto addable = Rational(n * sign, d);
+	auto ret = a + addable;
+	return ret;
 };
 double f(double x) {
 	const double a = 0.5;
@@ -31,6 +40,7 @@ double f(double x) {
 int main()
 {
 	cout << "My application" << endl;
+	cout << "Includes Fractionizer ( https://github.com/ajneu/fractionizer )" << endl;
 	cout << "Type double value: ";
 	double d;
 	cin >> d;
