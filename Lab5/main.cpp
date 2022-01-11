@@ -23,12 +23,12 @@ Complex f(const Complex& z) {
 Rational f(const Rational& r) {
 	const Rational a = Rational(1, 2);
 	const double r_d = (double) r;
-	const double result = (r_d * sin(2.0 * r_d));
+	const double result = sin(2.0 * r_d);
 	int n, d, sign;
 	sign = (result >= 0) ? 1 : -1;
 	Fractionizer::fractionize(abs(result), n, d);
 	Rational addable = Rational(n * sign, d);
-	Rational ret = a - addable;
+	Rational ret = a - (r*addable);
 	return ret;
 };
 double f(double x) {
