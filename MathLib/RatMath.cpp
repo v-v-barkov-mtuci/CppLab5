@@ -1,3 +1,5 @@
+#include <windows.h>
+
 module Math;
 using namespace Math;
 Rational::Rational() : nom(0), denom(1) {};
@@ -18,7 +20,7 @@ int Rational::Denominator() const {
 
 Rational Math::operator + (const Rational& a, const Rational& b) {
 	const int denom_lcm = Math::FindLeastCommonMultiple(a.Denominator(), b.Denominator());
-	return Rational((a.Nominator() * denom_lcm / a.Denominator()) + (b.Nominator() * denom_lcm / b.Denominator()), denom_lcm);
+	return Rational(MulDiv(a.Nominator(), denom_lcm, a.Denominator()) + MulDiv(b.Nominator(), denom_lcm, b.Denominator()), denom_lcm);
 };
 
 Rational Math::operator * (const Rational& a, const Rational& b) {
@@ -53,7 +55,7 @@ Rational Rational::operator--(int) {
 };
 Rational Math::operator - (const Rational& a, const Rational& b) {
 	const int denom_lcm = Math::FindLeastCommonMultiple(a.Denominator(), b.Denominator());
-	return Rational((a.Nominator() * denom_lcm / a.Denominator()) - (b.Nominator() * denom_lcm / b.Denominator()), denom_lcm);
+	return Rational(MulDiv(a.Nominator(), denom_lcm, a.Denominator()) - MulDiv(b.Nominator(), denom_lcm, b.Denominator()), denom_lcm);
 };
 Rational Math::operator / (const Rational& a, const Rational& b) {
 	return Rational(a.Nominator() * b.Denominator(), a.Denominator() * b.Nominator());
@@ -68,15 +70,15 @@ bool Rational::operator !=(Rational x) {
 
 bool Rational::operator >(Rational x) {
 	const int lcm = Math::FindLeastCommonMultiple(this->Denominator(), x.Denominator());
-	const int a_nom = this->Nominator() * lcm / this->Denominator();
-	const int b_nom = x.Nominator() * lcm / x.Denominator();
+	const int a_nom = MulDiv(this->Nominator(), lcm, this->Denominator());
+	const int b_nom = MulDiv(x.Nominator(), lcm, x.Denominator());
 
 	return a_nom > b_nom;
 };
 bool Rational::operator <(Rational x) {
 	const int lcm = Math::FindLeastCommonMultiple(this->Denominator(), x.Denominator());
-	const int a_nom = this->Nominator() * lcm / this->Denominator();
-	const int b_nom = x.Nominator() * lcm / x.Denominator();
+	const int a_nom = MulDiv(this->Nominator(), lcm, this->Denominator());
+	const int b_nom = MulDiv(x.Nominator(), lcm, x.Denominator());
 
 	return a_nom < b_nom;
 };
@@ -90,7 +92,7 @@ bool Rational::operator <=(Rational x) {
 
 Rational& Rational::operator+=(const Rational& a) {
 	const int new_denom = Math::FindLeastCommonMultiple(this->Denominator(), a.Denominator());
-	const int new_nom = (this->Nominator() * new_denom / this->Denominator()) + (a.Nominator() * new_denom / a.Denominator());
+	const int new_nom = MulDiv(this->Nominator(), new_denom, this->Denominator()) + MulDiv(a.Nominator(), new_denom, a.Denominator());
 
 	const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
 	const int sign = ((new_nom * new_denom) > 0) ? 1 : -1;
@@ -101,7 +103,7 @@ Rational& Rational::operator+=(const Rational& a) {
 };
 Rational& Rational::operator-=(const Rational& a) {
 	const int new_denom = Math::FindLeastCommonMultiple(this->Denominator(), a.Denominator());
-	const int new_nom = (this->Nominator() * new_denom / this->Denominator()) - (a.Nominator() * new_denom / a.Denominator());
+	const int new_nom = MulDiv(this->Nominator(), new_denom, this->Denominator()) - MulDiv(a.Nominator(), new_denom, a.Denominator());
 
 	const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
 	const int sign = ((new_nom * new_denom) > 0) ? 1 : -1;
