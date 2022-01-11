@@ -5,8 +5,6 @@ import Math;
 using namespace Math;
 using namespace std;
 
-// 8, а не 7, варик!
-
 Complex ComplexExpIZ(const Complex& z) {
 	return Complex(cos(z.Re()), sin(z.Re()))*Complex(pow(2.71828182845904523536, -z.Im()), 0.0);
 };
@@ -29,8 +27,8 @@ Rational f(const Rational& r) {
 	int n, d, sign;
 	sign = (result >= 0) ? 1 : -1;
 	Fractionizer::fractionize(abs(result), n, d);
-	auto addable = Rational(n * sign, d);
-	auto ret = a - addable;
+	Rational addable = Rational(n * sign, d);
+	Rational ret = a - addable;
 	return ret;
 };
 double f(double x) {
