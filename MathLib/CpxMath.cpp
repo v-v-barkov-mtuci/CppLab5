@@ -17,7 +17,7 @@ double Complex::Arg() const {
 	return arg;
 }
 
-Complex::Complex(double re, double im) : mod(sqrt(im * im + re * re)), arg((sqrt(im* im + re * re) < 0.000000000001) ? 0.0 : atan2(im, re)) {};
+Complex::Complex(double re, double im) : mod((hypot(re, im) < 0.000000000001) ? 0.0 : hypot(re, im)), arg((sqrt(im* im + re * re) < 0.000000000001) ? 0.0 : atan2(im, re)) {};
 
 Complex::Complex() : mod(0), arg(0) {};
 
@@ -43,7 +43,7 @@ void Complex::DeltaRealPart(const double delta) {
 	const double new_real = Re() + delta;
 	const double new_imag = Im();
 
-	mod = sqrt(new_real * new_real + new_imag * new_imag);
+	mod = hypot(new_real, new_imag);
 	arg = atan2(new_imag, new_real);
 };
 
