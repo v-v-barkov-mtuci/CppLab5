@@ -4,20 +4,20 @@ using namespace Math;
 const double Math::abs_threshold = 0.000000000001;
 
 double Complex::Re() const {
-	return mod*cos(arg);
-}
+	return mod * cos(arg);
+};
 
 double Complex::Im() const {
-	return mod*sin(arg);
-}
+	return mod * sin(arg);
+};
 
 double Complex::Mod() const {
 	return mod;
-}
+};
 
 double Complex::Arg() const {
 	return arg;
-}
+};
 
 Complex::Complex(double re, double im) : mod((hypot(re, im) < abs_threshold) ? 0.0 : hypot(re, im)), arg((sqrt(im* im + re * re) < abs_threshold) ? 0.0 : atan2(im, re)) {};
 

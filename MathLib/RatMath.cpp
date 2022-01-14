@@ -16,6 +16,7 @@ Rational::Rational(int n) : nom(n), denom(1) {};
 int Rational::Nominator() const {
 	return nom;
 };
+
 int Rational::Denominator() const {
 	return denom;
 };
@@ -54,7 +55,7 @@ Rational Math::operator / (const Rational& a, const Rational& b) {
 
 Rational::operator double() const {
 	return ((double)nom) / ((double)denom);
-}
+};
 
 Rational Rational::operator-() {
 	return Rational(-nom, denom);
@@ -89,6 +90,7 @@ Rational Rational::operator--(int) {
 bool Rational::operator ==(Rational x) {
 	return (this->Nominator() == x.Nominator()) && (this->Denominator() == x.Denominator());
 };
+
 bool Rational::operator !=(Rational x) {
 	return !((*this) == x);
 };
