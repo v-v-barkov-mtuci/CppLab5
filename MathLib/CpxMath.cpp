@@ -76,7 +76,7 @@ Complex Complex::operator--(int) {
 };
 
 Complex& Complex::operator+=(const Complex& a) {
-	Complex sum = (*this) + a;
+	Complex sum = Complex(this->Re() + a.Re(), this->Im() + a.Im());
 
 	std::swap(sum, *this);
 
@@ -84,9 +84,9 @@ Complex& Complex::operator+=(const Complex& a) {
 };
 
 Complex& Complex::operator-=(const Complex& a) {
-	Complex sum = (*this) - a;
+	Complex delta = Complex(this->Re() - a.Re(), this->Im() - a.Im());
 
-	std::swap(sum, *this);
+	std::swap(delta, *this);
 
 	return *this;
 };
