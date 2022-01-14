@@ -4,6 +4,8 @@ import <string_view>;
 import <iostream>;
 
 export namespace Math {
+	export extern const double abs_threshold;
+
 	class Complex {
 	private:
 		double mod;
