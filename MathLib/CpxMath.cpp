@@ -106,30 +106,35 @@ Complex& Complex::operator/=(const Complex& a) {
 };
 
 Complex Math::operator + (const Complex& a, const Complex& b) {
-	const double a_real = a.Re();
-	const double a_imag = a.Im();
+	Complex copy = a;
 
-	const double b_real = b.Re();
-	const double b_imag = b.Im();
+	copy += b;
 
-	const double new_real = a_real + b_real;
-	const double new_imag = a_imag + b_imag;
-
-	return Complex(new_real, new_imag);
+	return copy;
 };
 
 Complex Math::operator - (const Complex& a, const Complex& b) {
-	Complex b_copy = b;
+	Complex copy = a;
 
-	return a + (-b_copy);
+	copy -= b;
+
+	return copy;
 };
 
 Complex Math::operator * (const Complex& a, const Complex& b) {
-	return Math::Complex::FromExponentialForm(a.Mod() * b.Mod(), a.Arg() + b.Arg());
+	Complex copy = a;
+
+	copy *= b;
+
+	return copy;
 };
 
 Complex Math::operator / (const Complex& a, const Complex& b) {
-	return Math::Complex::FromExponentialForm(a.Mod() / b.Mod(), a.Arg() - b.Arg());
+	Complex copy = a;
+
+	copy /= b;
+
+	return copy;
 };
 
 Complex Math::operator "" i(long double x) {
