@@ -37,7 +37,7 @@ int main()
 	std::cin >> a >> b;
 	Rational r = f(Rational(a, b));
 	std::cout << r << std::endl;
-	std::cout << "Enter a real number" << std::endl;
+	std::cout << "¬ведите реальное число" << std::endl;
 	double d;
 	std::cin >> d;
 	std::cout << f(d) << std::endl;
