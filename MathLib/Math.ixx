@@ -3,68 +3,95 @@
 export module Math;
 
 export namespace Math {
-	Complex(double re = 0, double im = 0) : m_re(re), m_im(im) { }
+	class Complex {
+	public:
+		Complex(double re = 0, double im = 0) : m_re(re), m_im(im) { }
 
-	static Complex FromExponentialForm(double abs, double ph)
-	{
-		return Complex(abs * cos(ph), abs * sin(ph));
-	}
-	static Complex FromAlgebraicForm(double re, double im)
-	{
-		return Complex(re, im);
-	}
+		static Complex FromExponentialForm(double abs, double ph)
+		{
+			return Complex(abs * cos(ph), abs * sin(ph));
+		}
+		static Complex FromAlgebraicForm(double re, double im)
+		{
+			return Complex(re, im);
+		}
 
 
-	double Re() const { return m_re; }
-	double Im() const { return m_im; }
-	double Mod() const { return sqrt(m_re * m_re + m_im * m_im); }
-	double Arg() const { return atan2(m_im, m_re); }
+		double Re() const {
+			return m_re;
+		}
+		double Im() const {
+			return m_im;
+		}
+		double Mod() const {
+			return sqrt(m_re * m_re + m_im * m_im);
+		}
+		double Arg() const {
+			return atan2(m_im, m_re);
+		}
 
-	explicit operator double() const { return m_re; }
-	Complex operator -() const { return Complex(-m_re, -m_im); }
+		explicit operator double() const { return m_re; }
+		Complex operator -() const { return Complex(-m_re, -m_im); }
 
-	Complex& operator ++() { ++m_re; return *this; }
-	Complex operator ++(int) {
-		Complex c(m_re, m_im);
-		++(*this);
+		Complex& operator ++() { ++m_re; return *this; }
+		Complex operator ++(int) {
+			Complex c(m_re, m_im);
+			++(*this);
+			return c;
+		}
+		Complex& operator --() { --m_re; return *this; }
+		Complex operator --(int) {
+			Complex c(m_re, m_im);
+			--(*this);
+			return c;
+		}
+
+
+		friend std::ostream& operator<< (std::ostream& stream, const Complex& instance);
+
+		Complex& operator +=(const Complex& rhs) {
+			m_re += rhs.m_re;
+			m_im += rhs.m_im;
+			return *this;
+		}
+		Complex& operator -=(const Complex& rhs) {
+			m_re -= rhs.m_re;
+			m_im -= rhs.m_im;
+			return *this;
+		}
+		Complex& operator *=(const Complex& rhs) {
+			double t_re, t_im;
+			t_re = m_re * rhs.m_re - m_im * rhs.m_im;
+			t_im = m_re * rhs.m_im + m_im * rhs.m_re;
+			m_re = t_re;
+			m_im = t_im;
+			return *this;
+		}
+		Complex& operator /=(const Complex& rhs) {
+			double t_re, t_im;
+			t_re = (m_re * rhs.m_re + m_im * rhs.m_im) / (rhs.m_re * rhs.m_re + rhs.m_im * rhs.m_im);
+			t_im = (-m_re * rhs.m_im + m_im * rhs.m_re) / (rhs.m_re * rhs.m_re + rhs.m_im * rhs.m_im);
+			m_re = t_re;
+			m_im = t_im;
+			return *this;
+		}
+	private:
+		double m_re, m_im;
+	};
+
+	Complex operator +(const Complex& lhs, const Complex& rhs) {
+		Complex c = lhs;
+		c += rhs;
 		return c;
 	}
-	Complex& operator --() { --m_re; return *this; }
-	Complex operator --(int) {
-		Complex c(m_re, m_im);
-		--(*this);
+	Complex operator -(const Complex& lhs, const Complex& rhs)
+	{
+		Complex c = lhs;
+		c -= rhs;
 		return c;
 	}
 
 
-	friend std::ostream& operator<< (std::ostream& stream, const Complex& instance);
-
-	Complex& operator +=(const Complex& rhs) {
-		m_re += rhs.m_re;
-		m_im += rhs.m_im;
-		return *this;
-	}
-	Complex& operator -=(const Complex& rhs) {
-		m_re -= rhs.m_re;
-		m_im -= rhs.m_im;
-		return *this;
-	}
-	Complex& operator *=(const Complex& rhs) {
-		double t_re, t_im;
-		t_re = m_re * rhs.m_re - m_im * rhs.m_im;
-		t_im = m_re * rhs.m_im + m_im * rhs.m_re;
-		m_re = t_re;
-		m_im = t_im;
-		return *this;
-	}
-	Complex& operator /=(const Complex& rhs) {
-		double t_re, t_im;
-		t_re = (m_re * rhs.m_re + m_im * rhs.m_im) / (rhs.m_re * rhs.m_re + rhs.m_im * rhs.m_im);
-		t_im = (-m_re * rhs.m_im + m_im * rhs.m_re) / (rhs.m_re * rhs.m_re + rhs.m_im * rhs.m_im);
-		m_re = t_re;
-		m_im = t_im;
-		return *this;
-	}
 	Complex operator *(const Complex& lhs, const Complex& rhs) {
 		Complex c = lhs;
 		c *= rhs;
@@ -108,13 +135,21 @@ export namespace Math {
 	public:
 
 		Rational(int n = 0, int d = 1) : m_nominator(n), m_denominator(d) { Starndart(); }
-		int Nominator() const { return m_nominator; }
-		int Denominator() const { return m_denominator; }
+		int Nominator() const {
+			return m_nominator;
+		}
+		int Denominator() const {
+			return m_denominator;
+		}
 
 
 
-		explicit operator double() const { return ((double)m_nominator) / m_denominator; }
-		Rational operator -() { return Rational(-m_nominator, m_denominator); }
+		explicit operator double() const {
+			return ((double)m_nominator) / m_denominator;
+		}
+		Rational operator -() {
+			return Rational(-m_nominator, m_denominator);
+		}
 		Rational& operator ++() {
 			m_nominator += m_denominator;
 			Starndart();
@@ -226,4 +261,3 @@ export namespace Math {
 		return stream;
 	}
 }
-
