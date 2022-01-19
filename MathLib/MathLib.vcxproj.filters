@@ -18,5 +18,11 @@
     <ClCompile Include="Math.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Complex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rational.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
