@@ -26,18 +26,17 @@ double f(double x) {
 
 int main()
 {
-	setlocale(LC_ALL, "Russian");
-	std::cout << "¬ведите действительную и мнимую части комплексного числа" << std::endl;
+	std::cout << "Enter the real and imaginary parts of the complex number" << std::endl;
 	int a, b;
 	std::cin >> a >> b;
 	Complex c(a, b);
 	c = f(c);
 	std::cout << c << std::endl;
-	std::cout << "¬ведите числитель и знаменатель" << std::endl;
+	std::cout << "Enter the numerator and denominator" << std::endl;
 	std::cin >> a >> b;
 	Rational r = f(Rational(a, b));
 	std::cout << r << std::endl;
-	std::cout << "¬ведите реальное число" << std::endl;
+	std::cout << "Enter a real number" << std::endl;
 	double d;
 	std::cin >> d;
 	std::cout << f(d) << std::endl;
