@@ -62,12 +62,12 @@
     <ClCompile Include="RationalTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\MathLib\MathLib.vcxproj">
       <Project>{8251b46d-2185-4402-b639-f8520808554c}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
