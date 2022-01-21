@@ -18,5 +18,11 @@
     <ClCompile Include="Math.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CpxMath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RatMath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

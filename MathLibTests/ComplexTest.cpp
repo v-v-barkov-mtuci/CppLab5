@@ -9,7 +9,7 @@ namespace Math::Test
 	{
 		EXPECT_DOUBLE_EQ(re, z.Re());
 		EXPECT_DOUBLE_EQ(im, z.Im());
-		EXPECT_DOUBLE_EQ(sqrt(re*re + im*im), z.Mod());
+		EXPECT_DOUBLE_EQ(sqrt(re * re + im * im), z.Mod());
 		EXPECT_DOUBLE_EQ(atan2(im, re), z.Arg());
 	}
 
@@ -79,8 +79,8 @@ namespace Math::Test
 		ExpectComplexHasReAndIm(-1, -1, z2);
 	}
 	TEST(ComplexTest, TestPrefixIncrement) {
-		Complex z1 = Complex::FromAlgebraicForm( 1, 1 );
-		
+		Complex z1 = Complex::FromAlgebraicForm(1, 1);
+
 		Complex z2 = ++z1;
 
 		auto isSame = std::is_same_v<Complex&, decltype(++z1)>;
@@ -90,8 +90,8 @@ namespace Math::Test
 	}
 
 	TEST(ComplexTest, TestPostfixIncrement) {
-		Complex z1 = Complex::FromAlgebraicForm( 1, 1 );
-		
+		Complex z1 = Complex::FromAlgebraicForm(1, 1);
+
 		Complex z2 = z1++;
 
 		auto isSame = std::is_same_v<Complex, decltype(z1++)>;
@@ -101,8 +101,8 @@ namespace Math::Test
 	}
 
 	TEST(ComplexTest, TestPrefixDecrement) {
-		Complex z1 = Complex::FromAlgebraicForm( 2, 1 );
-		
+		Complex z1 = Complex::FromAlgebraicForm(2, 1);
+
 		Complex& z2 = --z1;
 
 		auto isSame = std::is_same_v<Complex&, decltype(--z1)>;
@@ -112,8 +112,8 @@ namespace Math::Test
 	}
 
 	TEST(ComplexTest, TestPostfixDecrement) {
-		Complex z1 = Complex::FromAlgebraicForm( 2, 1 );
-		
+		Complex z1 = Complex::FromAlgebraicForm(2, 1);
+
 		Complex z2 = z1--;
 
 		auto isSame = std::is_same_v<Complex, decltype(z1--)>;
@@ -123,9 +123,9 @@ namespace Math::Test
 	}
 
 	TEST(ComplexTest, TestAddAndAssign) {
-		Complex z1 = Complex::FromAlgebraicForm( 1, 1 );
-		
-		Complex z2 = z1 += Complex::FromAlgebraicForm( 1, 1 );
+		Complex z1 = Complex::FromAlgebraicForm(1, 1);
+
+		Complex z2 = z1 += Complex::FromAlgebraicForm(1, 1);
 
 		auto isSame = std::is_same_v<Complex&, decltype(z1 += Complex::FromAlgebraicForm(1, 1))>;
 		EXPECT_TRUE(isSame);
@@ -134,19 +134,19 @@ namespace Math::Test
 	}
 
 	TEST(ComplexTest, TestSubAndAssign) {
-		Complex z1 = Complex::FromAlgebraicForm( 2, 2 );
-		
-		Complex z2 = z1 -= Complex::FromAlgebraicForm( 1, 1 );
+		Complex z1 = Complex::FromAlgebraicForm(2, 2);
 
-		auto isSame = std::is_same_v<Complex&, decltype(z1 -= Complex::FromAlgebraicForm(1, 1))> ;
+		Complex z2 = z1 -= Complex::FromAlgebraicForm(1, 1);
+
+		auto isSame = std::is_same_v<Complex&, decltype(z1 -= Complex::FromAlgebraicForm(1, 1))>;
 		EXPECT_TRUE(isSame);
 		ExpectComplexHasReAndIm(1, 1, z1);
 		ExpectComplexHasReAndIm(1, 1, z2);
 	}
 
 	TEST(ComplexTest, TestMulAndAssign) {
-		Complex z1 = Complex::FromExponentialForm(2,0);
-		
+		Complex z1 = Complex::FromExponentialForm(2, 0);
+
 		Complex z2 = z1 *= Complex::FromExponentialForm(2, M_PI_4);
 
 		auto isSame = std::is_same_v<Complex&, decltype(z1 *= Complex::FromExponentialForm(2, M_PI_4))>;
@@ -157,7 +157,7 @@ namespace Math::Test
 
 	TEST(ComplexTest, TestDivAndAssign) {
 		Complex z1 = Complex::FromExponentialForm(8, M_PI_2);
-		
+
 		Complex z2 = z1 /= Complex::FromExponentialForm(2, M_PI_4);
 
 		auto isSame = std::is_same_v<Complex&, decltype(z1 /= Complex::FromExponentialForm(2, M_PI_4))>;
@@ -169,7 +169,7 @@ namespace Math::Test
 	TEST(ComplexTest, TestAdd) {
 		Complex z1 = Complex::FromAlgebraicForm(1, 1);
 		Complex z2 = Complex::FromAlgebraicForm(1, 1);
-		
+
 		Complex z = z1 + z2;
 
 		auto isSame = std::is_same_v<Complex, decltype(z1 + z2)>;
@@ -180,8 +180,8 @@ namespace Math::Test
 	}
 
 	TEST(ComplexTest, TestSub) {
-		Complex z1 = Complex::FromAlgebraicForm( 2, 2 );
-		Complex z2 = Complex::FromAlgebraicForm( 1, 1 );
+		Complex z1 = Complex::FromAlgebraicForm(2, 2);
+		Complex z2 = Complex::FromAlgebraicForm(1, 1);
 		Complex z = z1 - z2;
 
 		auto isSame = std::is_same_v<Complex, decltype(z1 - z2)>;
@@ -194,10 +194,10 @@ namespace Math::Test
 	TEST(ComplexTest, TestMul) {
 		Complex z1 = Complex::FromExponentialForm(2, 0);
 		Complex z2 = Complex::FromExponentialForm(2, M_PI_4);
-		
+
 		Complex z = z1 * z2;
-		
-		auto isSame = std::is_same_v<Complex, decltype(z1 * z2)>;
+
+		auto isSame = std::is_same_v<Complex, decltype(z1* z2)>;
 		EXPECT_TRUE(isSame);
 		ExpectComplexHasModAndArg(2, 0, z1);
 		ExpectComplexHasModAndArg(2, M_PI_4, z2);
@@ -207,9 +207,9 @@ namespace Math::Test
 	TEST(ComplexTest, TestDiv) {
 		Complex z1 = Complex::FromExponentialForm(8, M_PI_2);
 		Complex z2 = Complex::FromExponentialForm(2, M_PI_4);
-		
+
 		Complex z = z1 / z2;
-		
+
 		auto isSame = std::is_same_v<Complex, decltype(z1 / z2)>;
 		EXPECT_TRUE(isSame);
 		ExpectComplexHasModAndArg(8, M_PI_2, z1);
