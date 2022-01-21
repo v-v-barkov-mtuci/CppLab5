@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <windows.h>
 
 export module Math;
 
@@ -42,7 +43,7 @@ namespace Math {
             m_re += 1;
             return *this;
         }
-        Complex& operator++(int) {
+        Complex operator++(int) {
             Complex temp = *this;
             ++* this;
             return temp;
@@ -51,31 +52,31 @@ namespace Math {
             m_re -= 1;
             return *this;
         }
-        Complex& operator--(int) {
+        Complex operator--(int) {
             Complex temp = *this;
             --* this;
             return temp;
         }
         Complex& operator+=(const Complex& x) {
-            Complex temp = *this;
-            temp.m_re += x.m_re;
-            temp.m_im += x.m_im;
+            Complex sum = Complex(this->Re() + x.Re(), this->Im() + x.Im());
+            std::swap(sum, *this);
             return *this;
         }
         Complex& operator-=(const Complex& x) {
-            Complex temp = *this;
-            temp.m_re -= x.m_re;
-            temp.m_im -= x.m_im;
+            Complex sum = Complex(this->Re() - x.Re(), this->Im() - x.Im());
+            std::swap(sum, *this);
             return *this;
         }
         Complex& operator*=(const Complex& x) {
-            Complex temp = *this;
-            temp = temp * x;
+            Complex temp1 = Complex((Re() * x.Re()) - (Im() * x.Im()), (Re() * x.Im()) + (x.Re() * Im()));
+
+            std::swap(temp1, *this);
             return *this;
         }
         Complex& operator/=(const Complex& x) {
-            Complex temp = *this;
-            temp = temp / x;
+            Complex temp1 = Complex(((Re() * x.Re() + Im() * x.Im()) / ((x.Re() * x.Re()) + (x.Im() * x.Im()))), ((Im() * x.Re() - Re() * x.Im()) / ((x.Re() * x.Re()) + (x.Im() * x.Im()))));
+
+            std::swap(temp1, *this);
             return *this;
         }
         Complex friend operator+(const Complex& x, const Complex& y) {
@@ -91,8 +92,7 @@ namespace Math {
             return Complex(x.Re() - y.Re(), x.Im() - y.Im());
         }
         Complex friend operator * (const Complex& x, const Complex& y) {
-            //return Complex((x.Re() * y.Re()) - (x.Im() * y.Im()), (x.Re() * y.Im()) + (y.Im() * x.Im()));
-            return Complex((x.m_re * y.m_re) - (x.m_im * y.m_im), (x.m_re * y.m_im) + (y.m_im * x.m_im));
+            return Complex((x.Re() * y.Re()) - (x.Im() * y.Im()), (x.Re() * y.Im()) + (y.Re() * x.Im()));
         }
         Complex friend operator*(const double& x, const Complex& y) {
             return Complex(x * y.Re(), x * y.Im());
@@ -125,10 +125,10 @@ namespace Math {
     }
     export int FindGreatestCommonDivisor(int a, int b) {
         if (b == 0) return a;
-        return FindGreatestCommonDivisor(b, a % b);
+        return abs(FindGreatestCommonDivisor(b, a % b));
     }
     export int FindLeastCommonMultiple(int x, int y) {
-        return abs(x * y) / FindGreatestCommonDivisor(x, y);
+        return abs(abs(x * y) / FindGreatestCommonDivisor(x, y));
     }
     export class Rational
     {
@@ -137,7 +137,13 @@ namespace Math {
         int m_denominator;
     public:
         Rational() :m_nominator(0), m_denominator(1) {}
-        Rational(int nominator, int denominator) :m_nominator(nominator), m_denominator(denominator) {}
+        //Rational(int nominator, int denominator) :m_nominator(nominator), m_denominator(denominator) {}
+        Rational(int n, int d) {
+            const int gcd = Math::FindGreatestCommonDivisor(n, d);
+            const int sign = ((n * d) > 0) ? 1 : -1;
+            m_nominator = abs(n / gcd) * sign;
+            m_denominator = abs(d / gcd);
+        };
         Rational(int nominator) :m_nominator(nominator), m_denominator(1) {}
         void normalize() {
             int divisor = FindGreatestCommonDivisor(m_nominator, m_denominator);
@@ -162,7 +168,7 @@ namespace Math {
             m_nominator += m_denominator;
             return *this;
         }
-        Rational& operator++(int) {
+        Rational operator++(int) {
             Rational temp = *this;
             ++* this;
             return temp;
@@ -171,33 +177,53 @@ namespace Math {
             m_nominator -= m_denominator;
             return *this;
         }
-        Rational& operator--(int) {
+        Rational operator--(int) {
             Rational temp = *this;
             --* this;
             return temp;
         }
-        Rational& operator+=(const Rational& x) {
-            Rational temp = *this;
-            temp.m_nominator = temp.m_nominator - x.m_nominator;
-            temp.m_denominator = temp.m_nominator + x.m_denominator;
+        Rational& operator+=(const Rational& a) {
+            const int new_denom = Math::FindLeastCommonMultiple(this->Denominator(), a.Denominator());
+            const int new_nom = MulDiv(this->Nominator(), new_denom, this->Denominator()) + MulDiv(a.Nominator(), new_denom, a.Denominator());
+
+            const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
+            const int sign = ((new_nom * new_denom) > 0) ? 1 : -1;
+            m_nominator = abs(new_nom / gcd) * sign;
+            m_denominator = abs(new_denom / gcd);
+
             return *this;
         }
-        Rational& operator-=(const Rational& x) {
-            Rational temp = *this;
-            temp.m_nominator = temp.m_nominator - x.m_nominator;
-            temp.m_denominator = temp.m_nominator - x.m_denominator;
+        Rational& operator-=(const Rational& a) {
+            const int new_denom = Math::FindLeastCommonMultiple(this->Denominator(), a.Denominator());
+            const int new_nom = MulDiv(this->Nominator(), new_denom, this->Denominator()) - MulDiv(a.Nominator(), new_denom, a.Denominator());
+
+            const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
+            const int sign = ((new_nom * new_denom) > 0) ? 1 : -1;
+            m_nominator = abs(new_nom / gcd) * sign;
+            m_denominator = abs(new_denom / gcd);
+
             return *this;
         }
-        Rational& operator*=(const Rational& x) {
-            Rational temp = *this;
-            temp = temp * x;
+        Rational& operator*=(const Rational& a) {
+            const int new_nom = this->Nominator() * a.Nominator();
+            const int new_denom = this->Denominator() * a.Denominator();
+            const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
+
+            m_nominator = new_nom / gcd;
+            m_denominator = new_denom / gcd;
+
             return *this;
         }
-        Rational& operator/=(const Rational& x) {
-            Rational temp = *this;
-            temp = temp / x;
+        Rational& operator/=(const Rational& a) {
+            const int new_nom = this->Nominator() * a.Denominator();
+            const int new_denom = this->Denominator() * a.Nominator();
+            const int gcd = Math::FindGreatestCommonDivisor(new_nom, new_denom);
+
+            m_nominator = new_nom / gcd;
+            m_denominator = new_denom / gcd;
+
             return *this;
-        }
+        };
         Rational friend operator+(const Rational& x, const Rational& y) {
             int divisor = FindLeastCommonMultiple(x.Denominator(), y.Denominator());
             Rational temp = Rational(x.Nominator() * divisor / x.Denominator() + y.Nominator() * divisor / y.Denominator(), divisor);
@@ -216,11 +242,13 @@ namespace Math {
             temp.normalize();
             return temp;
         }
-        Rational friend operator-(const Rational& x, const Rational& y) {
-            Rational temp = Rational(x.Nominator() - y.Nominator(), x.Denominator() - y.Denominator());
-            temp.normalize();
-            return temp;
-        }
+        Rational friend operator - (const Rational& a, const Rational& b) {
+            Rational copy = a;
+
+            copy -= b;
+
+            return copy;
+        };
         Rational friend operator*(const Rational& x, const Rational& y) {
             Rational temp = Rational(x.Nominator() * y.Nominator(), x.Denominator() * y.Denominator());
             temp.normalize();
